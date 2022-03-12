@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: ChaingeFinance
 pragma solidity ^0.8.12;
 
-import "./access/Controller.sol";
-import "./FRC759.sol";
+import "../access/Controller.sol";
+import "../FRC759.sol";
 
 
 contract FRC759Token is Controller, FRC759 {
