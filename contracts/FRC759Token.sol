@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: ChaingeFinance
 pragma solidity ^0.8.12;
 
-import "./Controller.sol";
+import "./access/Controller.sol";
 import "./FRC759.sol";
 
 

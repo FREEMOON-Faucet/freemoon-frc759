@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: ChaingeFinance
 pragma solidity ^0.8.12;
 
+import "./Slice.sol";
 import "./libraries/SafeMath.sol";
+import "./interfaces/IFRC759.sol";
 import "./interfaces/ISlice.sol";
-import "./Context.sol";
+import "./utils/Context.sol";
 
 
 contract FRC759 is Context, IFRC759 {

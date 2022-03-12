@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: ChaingeFinance
 pragma solidity ^0.8.12;
 
-import "./Context.sol";
+import "../utils/Context.sol";
 
 
 abstract contract Ownable is Context {

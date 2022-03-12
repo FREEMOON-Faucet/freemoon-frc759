@@ -3,7 +3,8 @@ pragma solidity ^0.8.12;
 
 import "./libraries/SafeMath.sol";
 import "./interfaces/ISlice.sol";
-import "./Context.sol";
+import "./interfaces/IFRC759.sol";
+import "./utils/Context.sol";
 
 
 contract Slice is Context, ISlice {
