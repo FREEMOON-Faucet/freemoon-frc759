@@ -23,12 +23,13 @@ contract FRC759 is Context, IFRC759 {
     bool internal _allowSliceTransfer;
     mapping(address => bool) internal _blockList;
 
-    constructor (
+    constructor(
         string memory name_,
         string memory symbol_,
         uint8 decimals_,
         uint256 maxSupply_
-    ) {
+    )
+    {
         _name = name_;
         _symbol = symbol_;
         _decimals = decimals_;
@@ -42,11 +43,11 @@ contract FRC759 is Context, IFRC759 {
 
     mapping(uint256 => mapping(uint256 => address)) internal timeSlice;
 
-    function paused() public override view returns(bool) {
+    function paused() public override view returns (bool) {
         return _paused;
     }
 
-    function allowSliceTransfer() public override view returns(bool) {
+    function allowSliceTransfer() public override view returns (bool) {
         return _allowSliceTransfer;
     }
 
@@ -66,7 +67,7 @@ contract FRC759 is Context, IFRC759 {
         _blockList[account_] = blocked_;
     }
 
-    function name() public override view  returns (string memory) {
+    function name() public override view returns (string memory) {
         return _name;
     }
     function symbol() public override view returns (string memory) {
@@ -89,6 +90,7 @@ contract FRC759 is Context, IFRC759 {
         _totalSupply = _totalSupply.add(amount);
         ISlice(fullTimeToken).mint(account, amount);
     }
+
     function _burn(address account, uint256 amount) internal {
         ISlice(fullTimeToken).burn(account, amount);
     }
@@ -119,15 +121,13 @@ contract FRC759 is Context, IFRC759 {
 
     function transferFrom(address sender, address recipient, uint256 amount) public virtual returns (bool) {
         ISlice(fullTimeToken).transferByParent(sender, recipient, amount);
-        ISlice(fullTimeToken).approveByParent(sender, _msgSender(), 
-        ISlice(fullTimeToken).allowance(sender, _msgSender()).sub(amount, "FRC759: too less allowance"));
+        ISlice(fullTimeToken).approveByParent(sender, _msgSender(), ISlice(fullTimeToken).allowance(sender, _msgSender()).sub(amount, "FRC759: too less allowance"));
         return true;
     }
 
     function transferFromData(address sender, address recipient, uint256 amount, bytes calldata data) public virtual returns (bool) {
         ISlice(fullTimeToken).transferByParent(sender, recipient, amount);
-        ISlice(fullTimeToken).approveByParent(sender, _msgSender(), 
-        ISlice(fullTimeToken).allowance(sender, _msgSender()).sub(amount, "FRC759: too less allowance"));
+        ISlice(fullTimeToken).approveByParent(sender, _msgSender(), ISlice(fullTimeToken).allowance(sender, _msgSender()).sub(amount, "FRC759: too less allowance"));
         emit DataDelivery(data);
         return true;
     }
@@ -147,19 +147,18 @@ contract FRC759 is Context, IFRC759 {
         address sliceAddr = timeSlice[start][end];
         require(sliceAddr != address(0), "FRC759: slice not exists");
         ISlice(sliceAddr).transferByParent(sender, recipient, amount);
-        ISlice(fullTimeToken).approveByParent(sender, _msgSender(), 
-            ISlice(fullTimeToken).allowance(sender, _msgSender()).sub(amount, "FRC759: too less allowance"));
+        ISlice(fullTimeToken).approveByParent(sender, _msgSender(), ISlice(fullTimeToken).allowance(sender, _msgSender()).sub(amount, "FRC759: too less allowance"));
 	    return true;
     }
 
-    function timeSliceTransfer(address recipient, uint256 amount, uint256 start, uint256 end)  public virtual returns (bool) {
+    function timeSliceTransfer(address recipient, uint256 amount, uint256 start, uint256 end) public virtual returns (bool) {
         address sliceAddr = timeSlice[start][end];
         require(sliceAddr != address(0), "FRC759: slice not exists");
         ISlice(sliceAddr).transferByParent(_msgSender(), recipient, amount);
         return true;
     }
 
-    function createSlice(uint256 start, uint256 end) public returns(address sliceAddr) {
+    function createSlice(uint256 start, uint256 end) public returns (address sliceAddr) {
        require(end > start, "FRC759: tokenEnd must be greater than tokenStart");
        require(end <= MAX_TIME, "FRC759: tokenEnd must be less than MAX_TIME");
        require(timeSlice[start][end] == address(0), "FRC759: slice already exists");
@@ -172,8 +171,7 @@ contract FRC759 is Context, IFRC759 {
             if iszero(extcodesize(sliceAddr)) {revert(0, 0)}
         }
 
-        ISlice(sliceAddr).initialize(string(abi.encodePacked("TF_", _name)), 
-            string(abi.encodePacked("TF_", _symbol)), _decimals, start, end);
+        ISlice(sliceAddr).initialize(string(abi.encodePacked("TF_", _name)), string(abi.encodePacked("TF_", _symbol)), _decimals, start, end);
         
         timeSlice[start][end] = sliceAddr;
 
@@ -218,7 +216,7 @@ contract FRC759 is Context, IFRC759 {
 
         uint256 firstStart = ISlice(slices[0]).startTime();
         address sliceAddr;
-        if (firstStart <= block.timestamp){
+        if (firstStart <= block.timestamp) {
             firstStart = MIN_TIME;
         }
 
@@ -234,7 +232,7 @@ contract FRC759 is Context, IFRC759 {
         }
     }
 
-    function getSlice(uint256 start, uint256 end) public view returns(address) {
+    function getSlice(uint256 start, uint256 end) public view returns (address) {
         return timeSlice[start][end];
     }
 }

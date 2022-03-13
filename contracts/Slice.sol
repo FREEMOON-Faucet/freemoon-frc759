@@ -23,7 +23,7 @@ contract Slice is Context, ISlice {
 
     address public parent;
 
-    constructor () {}
+    constructor() {}
 
     function initialize(string memory name_, string memory symbol_, uint8 decimals_, uint256 start_, uint256 end_) public override {
         require(initialized == false, "Slice: already been initialized");
@@ -59,11 +59,11 @@ contract Slice is Context, ISlice {
         return _decimals;
     }
 
-    function startTime() public view override returns(uint256) {
+    function startTime() public view override returns (uint256) {
         return _start;
     }
     
-    function endTime() public view override returns(uint256) {
+    function endTime() public view override returns (uint256) {
         return _end;
     }
 
