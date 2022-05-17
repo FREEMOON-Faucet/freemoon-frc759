@@ -1,1 +1,3 @@
-# freemoon-frc759
+# FREEMOON FRC759
+
+## The FRC759 token used by FREEMOON DEX
