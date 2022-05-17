@@ -1,6 +1,5 @@
-
 // SPDX-License-Identifier: ChaingeFinance
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.13;
 
 import "./Slice.sol";
 import "./libraries/SafeMath.sol";
@@ -15,7 +14,7 @@ contract FRC759 is Context, IFRC759 {
     string private _name;
     string private _symbol;
     uint8 private _decimals;
-    uint256 private _totalSupply;
+    uint256 internal _totalSupply;
     uint256 private _maxSupply;
     address public fullTimeToken;
 
@@ -23,13 +22,7 @@ contract FRC759 is Context, IFRC759 {
     bool internal _allowSliceTransfer;
     mapping(address => bool) internal _blockList;
 
-    constructor(
-        string memory name_,
-        string memory symbol_,
-        uint8 decimals_,
-        uint256 maxSupply_
-    )
-    {
+    constructor(string memory name_, string memory symbol_, uint8 decimals_, uint256 maxSupply_) {
         _name = name_;
         _symbol = symbol_;
         _decimals = decimals_;
@@ -70,15 +63,19 @@ contract FRC759 is Context, IFRC759 {
     function name() public override view returns (string memory) {
         return _name;
     }
+
     function symbol() public override view returns (string memory) {
         return _symbol;
     }
+
     function decimals() public override view returns (uint8) {
         return _decimals;
     }
+
     function totalSupply() public override view returns (uint256) {
         return _totalSupply;
     }
+
     function maxSupply() public override view returns (uint256) {
         return _maxSupply;
     }
