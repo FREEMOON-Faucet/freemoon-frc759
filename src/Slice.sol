@@ -135,7 +135,7 @@ contract Slice is Context, ISlice {
 
     function _mint(address account, uint256 amount) internal virtual whenNotPaused {
         require(IFRC759(parent).blocked(account) == false, "Slice: account blocked");
-        require(account != address(0), "Slice: mint to the zero address");
+        // require(account != address(0), "Slice: mint to the zero address");
         require(amount > 0, "Slice: invalid amount to mint");
         _balances[account] = _balances[account].add(amount);
         emit Transfer(address(0), account, amount);
