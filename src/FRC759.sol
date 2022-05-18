@@ -89,6 +89,7 @@ contract FRC759 is Context, IFRC759 {
     }
 
     function _burn(address account, uint256 amount) internal {
+        _totalSupply = _totalSupply.sub(amount);
         ISlice(fullTimeToken).burn(account, amount);
     }
 
