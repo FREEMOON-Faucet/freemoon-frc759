@@ -11,22 +11,22 @@ import "./utils/Context.sol";
 contract FRC759 is Context, IFRC759 {
     using SafeMath for uint256;
 
-    string private _name;
-    string private _symbol;
-    uint8 private _decimals;
-    uint256 internal _totalSupply;
-    uint256 private _maxSupply;
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+    uint256 public totalSupply;
+    uint256 public maxSupply;
     address public fullTimeToken;
 
-    bool internal _paused;
-    bool internal _allowSliceTransfer;
-    mapping(address => bool) internal _blockList;
+    bool public paused;
+    bool public allowSliceTransfer;
+    mapping(address => bool) public blocked;
 
     constructor(string memory name_, string memory symbol_, uint8 decimals_, uint256 maxSupply_) {
-        _name = name_;
-        _symbol = symbol_;
-        _decimals = decimals_;
-        _maxSupply = maxSupply_;
+        name = name_;
+        symbol = symbol_;
+        decimals = decimals_;
+        maxSupply = maxSupply_;
 
         fullTimeToken = createSlice(MIN_TIME, MAX_TIME);
     }
@@ -36,60 +36,16 @@ contract FRC759 is Context, IFRC759 {
 
     mapping(uint256 => mapping(uint256 => address)) internal timeSlice;
 
-    function paused() public override view returns (bool) {
-        return _paused;
-    }
-
-    function allowSliceTransfer() public override view returns (bool) {
-        return _allowSliceTransfer;
-    }
-
-    function blocked(address account) public override view returns (bool) {
-        return _blockList[account];
-    }
-
-    function _setPaused(bool paused_) internal {
-        _paused = paused_;
-    }
-
-    function _setSliceTransfer(bool allowed_) internal {
-        _allowSliceTransfer = allowed_;
-    }
-
-    function _setBlockList(address account_, bool blocked_) internal {
-        _blockList[account_] = blocked_;
-    }
-
-    function name() public override view returns (string memory) {
-        return _name;
-    }
-
-    function symbol() public override view returns (string memory) {
-        return _symbol;
-    }
-
-    function decimals() public override view returns (uint8) {
-        return _decimals;
-    }
-
-    function totalSupply() public override view returns (uint256) {
-        return _totalSupply;
-    }
-
-    function maxSupply() public override view returns (uint256) {
-        return _maxSupply;
-    }
-
     function _mint(address account, uint256 amount) internal {
-        if (_maxSupply != 0) {
-            require(_totalSupply.add(amount) <= _maxSupply, "FRC759: maxSupply exceeds");
+        if (maxSupply != 0) {
+            require(totalSupply.add(amount) <= maxSupply, "FRC759: maxSupply exceeds");
         }
-        _totalSupply = _totalSupply.add(amount);
+        totalSupply = totalSupply.add(amount);
         ISlice(fullTimeToken).mint(account, amount);
     }
 
     function _burn(address account, uint256 amount) internal {
-        _totalSupply = _totalSupply.sub(amount);
+        totalSupply = totalSupply.sub(amount);
         ISlice(fullTimeToken).burn(account, amount);
     }
 
@@ -146,7 +102,7 @@ contract FRC759 is Context, IFRC759 {
         require(sliceAddr != address(0), "FRC759: slice not exists");
         ISlice(sliceAddr).transferByParent(sender, recipient, amount);
         ISlice(fullTimeToken).approveByParent(sender, _msgSender(), ISlice(fullTimeToken).allowance(sender, _msgSender()).sub(amount, "FRC759: too less allowance"));
-	    return true;
+        return true;
     }
 
     function timeSliceTransfer(address recipient, uint256 amount, uint256 start, uint256 end) public virtual returns (bool) {
@@ -169,7 +125,7 @@ contract FRC759 is Context, IFRC759 {
             if iszero(extcodesize(sliceAddr)) {revert(0, 0)}
         }
 
-        ISlice(sliceAddr).initialize(string(abi.encodePacked("TF_", _name)), string(abi.encodePacked("TF_", _symbol)), _decimals, start, end);
+        ISlice(sliceAddr).initialize(string(abi.encodePacked("TF_", name)), string(abi.encodePacked("TF_", symbol)), decimals, start, end);
         
         timeSlice[start][end] = sliceAddr;
 
@@ -234,3 +190,4 @@ contract FRC759 is Context, IFRC759 {
         return timeSlice[start][end];
     }
 }
+
