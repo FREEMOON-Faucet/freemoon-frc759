@@ -21,3 +21,4 @@ interface IFRC759 {
     function blocked(address account) external view returns (bool);
     function allowSliceTransfer() external view returns (bool);
 }
+

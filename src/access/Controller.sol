@@ -28,3 +28,4 @@ abstract contract Controller is Ownable {
         emit ControllerRemoved(_controller);
     }
 }
+

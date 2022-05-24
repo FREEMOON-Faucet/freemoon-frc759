@@ -11,7 +11,7 @@ contract FRC759Token is Controller, FRC759 {
 //    function mint(address account, uint256 amount) public onlyController {
 //        _mint(account, amount);
 //    }
-//    
+//
 //    function burn(address account, uint256 amount) public onlyController {
 //        _burn(account, amount);
 //    }
@@ -44,3 +44,4 @@ contract FRC759Token is Controller, FRC759 {
 //        _setBlockList(account, false);
 //    }
 }
+

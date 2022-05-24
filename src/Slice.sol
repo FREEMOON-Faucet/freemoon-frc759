@@ -9,7 +9,7 @@ import "./utils/Context.sol";
 
 contract Slice is Context, ISlice {
     using SafeMath for uint256;
-    
+ 
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
 
@@ -33,7 +33,7 @@ contract Slice is Context, ISlice {
         startTime = start_;
         endTime = end_;
         parent = _msgSender();
-        
+ 
         initialized = true;
     }
 

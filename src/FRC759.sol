@@ -40,6 +40,7 @@ contract FRC759 is Context, IFRC759 {
         if (maxSupply != 0) {
             require(totalSupply.add(amount) <= maxSupply, "FRC759: maxSupply exceeds");
         }
+
         totalSupply = totalSupply.add(amount);
         ISlice(fullTimeToken).mint(account, amount);
     }
@@ -64,7 +65,7 @@ contract FRC759 is Context, IFRC759 {
         require(sliceAddr != address(0), "FRC759: slice not exists");
         return ISlice(sliceAddr).balanceOf(account);
     }
-    
+ 
     function allowance(address owner, address spender) public view virtual returns (uint256) {
         return ISlice(fullTimeToken).allowance(owner, spender);
     }
@@ -113,20 +114,20 @@ contract FRC759 is Context, IFRC759 {
     }
 
     function createSlice(uint256 start, uint256 end) public returns (address sliceAddr) {
-       require(end > start, "FRC759: tokenEnd must be greater than tokenStart");
-       require(end <= MAX_TIME, "FRC759: tokenEnd must be less than MAX_TIME");
-       require(timeSlice[start][end] == address(0), "FRC759: slice already exists");
+        require(end > start, "FRC759: tokenEnd must be greater than tokenStart");
+        require(end <= MAX_TIME, "FRC759: tokenEnd must be less than MAX_TIME");
+        require(timeSlice[start][end] == address(0), "FRC759: slice already exists");
         bytes memory bytecode = type(Slice).creationCode;
 
         bytes32 salt = keccak256(abi.encodePacked(start, end));
-    
+ 
         assembly {
             sliceAddr := create2(0, add(bytecode, 32), mload(bytecode), salt)
             if iszero(extcodesize(sliceAddr)) {revert(0, 0)}
         }
 
         ISlice(sliceAddr).initialize(string(abi.encodePacked("TF_", name)), string(abi.encodePacked("TF_", symbol)), decimals, start, end);
-        
+ 
         timeSlice[start][end] = sliceAddr;
 
         emit SliceCreated(sliceAddr, start, end);
@@ -143,6 +144,7 @@ contract FRC759 is Context, IFRC759 {
         if (_left == address(0)) {
             _left = createSlice(MIN_TIME, sliceTime);
         }
+
         if (_right == address(0)) {
             _right = createSlice(sliceTime, MAX_TIME);
         }
@@ -152,30 +154,32 @@ contract FRC759 is Context, IFRC759 {
         ISlice(_left).mint(_msgSender(), amount);
         ISlice(_right).mint(_msgSender(), amount);
     }
-    
+ 
     function mergeSlices(uint256 amount, address[] calldata slices) public {
         require(slices.length > 0, "FRC759: empty slices array");
         require(amount > 0, "FRC759: amount cannot be zero");
 
         uint256 lastEnd = MIN_TIME;
-    
-        for(uint256 i = 0; i < slices.length; i++) {
+ 
+        for (uint256 i = 0; i < slices.length; i++) {
             uint256 _start = ISlice(slices[i]).startTime();
             uint256 _end = ISlice(slices[i]).endTime();
             require(slices[i] == getSlice(_start, _end), "FRC759: invalid slice address");
             require(lastEnd == 0 || _start == lastEnd, "FRC759: continuous slices required");
             ISlice(slices[i]).burn(_msgSender(), amount);
-            lastEnd = _end;       
+            lastEnd = _end;
         }
 
         uint256 firstStart = ISlice(slices[0]).startTime();
         address sliceAddr;
+
         if (firstStart <= block.timestamp) {
             firstStart = MIN_TIME;
         }
 
         if (lastEnd > block.timestamp) {
             sliceAddr = getSlice(firstStart, lastEnd);
+
             if (sliceAddr == address(0)) {
                 sliceAddr = createSlice(firstStart, lastEnd);
             }

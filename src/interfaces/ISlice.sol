@@ -22,3 +22,4 @@ interface ISlice {
     function approveByParent(address owner, address spender, uint256 amount) external returns (bool);
     function transferByParent(address sender, address recipient, uint256 amount) external returns (bool);
 }
+
