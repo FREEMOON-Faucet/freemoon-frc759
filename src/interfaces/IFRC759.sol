@@ -12,6 +12,9 @@ interface IFRC759 {
     function totalSupply() external view returns (uint256);
     function maxSupply() external view returns (uint256);
 
+    function transferFrom(address from, address to, uint256 value) external returns (bool);
+    function timeSliceTransfer(address recipient, uint256 amount, uint256 start, uint256 end) external returns (bool);
+
     function createSlice(uint256 start, uint256 end) external returns (address);
     function sliceByTime(uint256 amount, uint256 sliceTime) external;
     function mergeSlices(uint256 amount, address[] calldata slices) external;
