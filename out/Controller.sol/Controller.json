@@ -127,8 +127,15 @@
     "sourceMap": "",
     "linkReferences": {}
   },
+  "methodIdentifiers": {
+    "addController(address)": "a7fc7a07",
+    "isController(address)": "b429afeb",
+    "owner()": "8da5cb5b",
+    "removeController(address)": "f6a74ed7",
+    "transferOwnership(address)": "f2fde38b"
+  },
   "ast": {
-    "absolutePath": "/home/paddy/Code/FreemoonFaucet/freemoon-frc759/src/access/Controller.sol",
+    "absolutePath": "src/access/Controller.sol",
     "id": 1435,
     "exportedSymbols": {
       "Context": [
@@ -142,7 +149,7 @@
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "43:824:2",
+    "src": "43:822:2",
     "nodes": [
       {
         "id": 1353,
@@ -159,7 +166,7 @@
         "id": 1354,
         "nodeType": "ImportDirective",
         "src": "69:23:2",
-        "absolutePath": "/home/paddy/Code/FreemoonFaucet/freemoon-frc759/src/access/Ownable.sol",
+        "absolutePath": "src/access/Ownable.sol",
         "file": "./Ownable.sol",
         "nameLocation": "-1:-1:-1",
         "scope": 1435,
@@ -1113,5 +1120,6 @@
       }
     ],
     "license": "ChaingeFinance"
-  }
+  },
+  "id": 2
 }

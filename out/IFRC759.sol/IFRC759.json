@@ -504,8 +504,33 @@
     "sourceMap": "",
     "linkReferences": {}
   },
+  "methodIdentifiers": {
+    "MAX_TIME()": "26949984",
+    "MIN_TIME()": "8ff07b5b",
+    "allowSliceTransfer()": "25929a5e",
+    "allowance(address,address)": "dd62ed3e",
+    "approve(address,uint256)": "095ea7b3",
+    "balanceOf(address)": "70a08231",
+    "blocked(address)": "e5962195",
+    "createSlice(uint256,uint256)": "4b04b3cf",
+    "decimals()": "313ce567",
+    "fullTimeToken()": "2b53be31",
+    "getSlice(uint256,uint256)": "5d239d3e",
+    "maxSupply()": "d5abeb01",
+    "mergeSlices(uint256,address[])": "a0905e43",
+    "name()": "06fdde03",
+    "paused()": "5c975abb",
+    "sliceByTime(uint256,uint256)": "b886d81a",
+    "symbol()": "95d89b41",
+    "timeBalanceOf(address,uint256,uint256)": "3363b01d",
+    "timeSliceTransfer(address,uint256,uint256,uint256)": "a4c45c06",
+    "timeSliceTransferFrom(address,address,uint256,uint256,uint256)": "2cdc68c4",
+    "totalSupply()": "18160ddd",
+    "transfer(address,uint256)": "a9059cbb",
+    "transferFrom(address,address,uint256)": "23b872dd"
+  },
   "ast": {
-    "absolutePath": "/home/paddy/Code/FreemoonFaucet/freemoon-frc759/src/interfaces/IFRC759.sol",
+    "absolutePath": "src/interfaces/IFRC759.sol",
     "id": 1709,
     "exportedSymbols": {
       "IFRC759": [
@@ -513,7 +538,7 @@
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "43:1914:4",
+    "src": "43:1912:4",
     "nodes": [
       {
         "id": 1521,
@@ -2777,5 +2802,6 @@
       }
     ],
     "license": "ChaingeFinance"
-  }
+  },
+  "id": 4
 }

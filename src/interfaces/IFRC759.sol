@@ -35,4 +35,3 @@ interface IFRC759 {
     function MIN_TIME() external view returns (uint256);
     function MAX_TIME() external view returns (uint256);
 }
-

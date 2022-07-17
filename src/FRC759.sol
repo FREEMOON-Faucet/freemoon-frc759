@@ -194,4 +194,3 @@ contract FRC759 is Context, IFRC759 {
         return timeSlice[start][end];
     }
 }
-
