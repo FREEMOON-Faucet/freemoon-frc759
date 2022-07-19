@@ -1,11 +1,224 @@
-// SPDX-License-Identifier: ChaingeFinance
+// SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.13;
 
-import "./Slice.sol";
-import "./libraries/SafeMath.sol";
-import "./interfaces/IFRC759.sol";
-import "./interfaces/ISlice.sol";
-import "./utils/Context.sol";
+
+library SafeMath {
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a + b;
+        require(c >= a, "SafeMath: addition overflow");
+
+        return c;
+    }
+ 
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        return sub(a, b, "SafeMath: subtraction overflow");
+    }
+ 
+    function sub(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b <= a, errorMessage);
+        uint256 c = a - b;
+
+        return c;
+    }
+
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        if (a == 0) {
+            return 0;
+        }
+
+        uint256 c = a * b;
+        require(c / a == b, "SafeMath: multiplication overflow");
+
+        return c;
+    }
+
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        return div(a, b, "SafeMath: division by zero");
+    }
+
+    function div(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b > 0, errorMessage);
+        uint256 c = a / b;
+
+        return c;
+    }
+
+    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
+        return mod(a, b, "SafeMath: modulo by zero");
+    }
+
+    function mod(uint256 a, uint256 b, string memory errorMessage) internal pure returns (uint256) {
+        require(b != 0, errorMessage);
+        return a % b;
+    }
+}
+
+
+abstract contract Context {
+    function _msgSender() internal view virtual returns (address) {
+        return msg.sender;
+    }
+
+    function _msgData() internal view virtual returns (bytes calldata) {
+        return msg.data;
+    }
+}
+
+
+interface ISlice {
+    event Transfer(address indexed sender, address indexed recipient, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+
+    function name() external view returns (string memory);
+    function symbol() external view returns (string memory);
+    function decimals() external view returns (uint8);
+    function startTime() external view returns (uint256); 
+    function endTime() external view returns (uint256);
+    function balanceOf(address account) external view returns (uint256);
+    function allowance(address owner, address spender) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address sender, address recipient, uint256 amount) external returns (bool);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function mint(address account, uint256 amount) external;
+    function burn(address account, uint256 amount) external;
+    function initialize(string memory name, string memory symbol, uint8 decimals, uint256 start, uint256 end) external;
+    function approveByParent(address owner, address spender, uint256 amount) external returns (bool);
+    function transferByParent(address sender, address recipient, uint256 amount) external returns (bool);
+}
+
+
+interface IFRC759 {
+    event DataDelivery(bytes data);
+    event SliceCreated(address indexed sliceAddr, uint256 start, uint256 end);
+
+    function name() external view returns (string memory);
+    function symbol() external view returns (string memory);
+    function decimals() external view returns (uint8);
+    function totalSupply() external view returns (uint256);
+    function maxSupply() external view returns (uint256);
+    function fullTimeToken() external view returns (address);
+
+    function balanceOf(address account) external view returns (uint256);
+    function allowance(address owner, address spender) external view returns (uint256);
+
+    function transferFrom(address from, address to, uint256 value) external returns (bool);
+    function transfer(address recipient, uint256 amount) external returns (bool);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function timeSliceTransferFrom(address spender, address recipient, uint256 amount, uint256 start, uint256 end) external returns (bool);
+    function timeSliceTransfer(address recipient, uint256 amount, uint256 start, uint256 end) external returns (bool);
+
+    function createSlice(uint256 start, uint256 end) external returns (address);
+    function sliceByTime(uint256 amount, uint256 sliceTime) external;
+    function mergeSlices(uint256 amount, address[] calldata slices) external;
+    function getSlice(uint256 start, uint256 end) external view returns (address);
+    function timeBalanceOf(address account, uint256 start, uint256 end) external view returns (uint256);
+
+    function paused() external view returns (bool);
+    function allowSliceTransfer() external view returns (bool);
+    function blocked(address account) external view returns (bool);
+
+    function MIN_TIME() external view returns (uint256);
+    function MAX_TIME() external view returns (uint256);
+}
+
+
+contract Slice is Context, ISlice {
+    using SafeMath for uint256;
+ 
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+    uint256 public startTime;
+    uint256 public endTime;
+
+    bool private initialized;
+
+    address public parent;
+
+    constructor() {}
+
+    function initialize(string memory name_, string memory symbol_, uint8 decimals_, uint256 start_, uint256 end_) public override {
+        require(initialized == false, "Slice: already been initialized");
+        name = name_;
+        symbol = symbol_;
+        decimals = decimals_;
+        startTime = start_;
+        endTime = end_;
+        parent = _msgSender();
+ 
+        initialized = true;
+    }
+
+    function approve(address spender, uint256 amount) public virtual override returns (bool) {
+        _approve(_msgSender(), spender, amount);
+        return true;
+    }
+
+    function approveByParent(address owner, address spender, uint256 amount) public virtual override returns (bool) {
+        require(_msgSender() == parent, "Slice: caller must be parent");
+        _approve(owner, spender, amount);
+        return true;
+    }
+
+    function transferFrom(address sender, address recipient, uint256 amount) public virtual override returns (bool) {
+        _transfer(sender, recipient, amount);
+        _approve(sender, _msgSender(), allowance[sender][_msgSender()].sub(amount, "Slice: too less allowance"));
+        return true;
+    }
+
+    function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
+        _transfer(_msgSender(), recipient, amount);
+        return true;
+    }
+
+    function transferByParent(address sender, address recipipent, uint256 amount) public virtual override returns (bool) {
+        require(_msgSender() == parent, "Slice: caller must be parent");
+        _transfer(sender, recipipent, amount);
+        return true;
+    }
+
+    function mint(address account, uint256 amount) public virtual override {
+        require(_msgSender() == parent, "Slice: caller must be parent");
+        _mint(account, amount);
+    }
+
+    function burn(address account, uint256 amount) public override {
+        require(_msgSender() == parent, "Slice: caller must be parent");
+        require(balanceOf[account] >=  amount, "Slice: burn amount exceeds balance");
+        _burn(account, amount);
+    }
+
+    function _transfer(address sender, address recipient, uint256 amount) internal virtual {
+        require(sender != address(0), "Slice: transfer from the zero address");
+        require(recipient != address(0), "Slice: transfer to the zero address");
+
+        balanceOf[sender] = balanceOf[sender].sub(amount, "Slice: transfer amount exceeds balance");
+        balanceOf[recipient] = balanceOf[recipient].add(amount);
+        emit Transfer(sender, recipient, amount);
+    }
+
+    function _approve(address owner, address spender, uint256 amount) internal virtual {
+        require(owner != address(0), "Slice: approve from the zero address");
+        require(spender != address(0), "Slice: approve to the zero address");
+
+        allowance[owner][spender] = amount;
+        emit Approval(owner, spender, amount);
+    }
+
+    function _mint(address account, uint256 amount) internal virtual {
+        require(amount > 0, "Slice: invalid amount to mint");
+        balanceOf[account] = balanceOf[account].add(amount);
+        emit Transfer(address(0), account, amount);
+    }
+
+    function _burn(address account, uint256 amount) internal virtual {
+        balanceOf[account] = balanceOf[account].sub(amount, "Slice: transfer amount exceeds balance");
+        emit Transfer(account, address(0), amount);
+    }
+}
 
 
 contract FRC759 is Context, IFRC759 {

@@ -1,0 +1,50 @@
+{
+  "compiler": {
+    "version": "0.8.13+commit.abaa5c0e"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [],
+    "devdoc": {
+      "kind": "dev",
+      "methods": {},
+      "version": 1
+    },
+    "userdoc": {
+      "kind": "user",
+      "methods": {},
+      "version": 1
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "src/FRC759.sol": "SafeMath"
+    },
+    "evmVersion": "london",
+    "libraries": {},
+    "metadata": {
+      "bytecodeHash": "ipfs"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": [
+      ":ds-test/=lib/forge-std/lib/ds-test/src/",
+      ":forge-std/=lib/forge-std/src/",
+      ":src/=src/",
+      ":test/=test/"
+    ]
+  },
+  "sources": {
+    "src/FRC759.sol": {
+      "keccak256": "0xf17ad5fb439cae0aeb6250da8402544f764b66f88f5b36e366a11aa04fb5c2de",
+      "license": "Unlicense",
+      "urls": [
+        "bzz-raw://626cf5514a27fa0caf63cfcf830c8351c87dd0d1228854f767d8874ba978c773",
+        "dweb:/ipfs/QmXNyVAvQdi4DGQ7osG7czjsM9TE3gZMUNLrwfrwAW292h"
+      ]
+    }
+  },
+  "version": 1
+}
